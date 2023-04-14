@@ -1,4 +1,5 @@
 from .color import Color
+from typing import TextIO
 
 class PPMImage:
     def __init__(self, width: int, height: int):
@@ -13,9 +14,8 @@ class PPMImage:
             for i in range(self.width):
                 s += str(self._image[j][i]) + "\n"
         return s
-    def write_file(self, filename: str):
-        with open(filename, "w") as fout:
-            fout.write(self.write_string())
+    def write_file(self, file: TextIO):
+        file.write(self.write_string())
     
     @property
     def width(self):
