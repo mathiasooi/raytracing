@@ -15,5 +15,5 @@ poetry run pytest
 
 Running:
 ```bash
-poetry run raytracing.py
+poetry run python ./raytracing.py
 ```
