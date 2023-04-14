@@ -14,7 +14,7 @@ class Vec3:
         return self / self.length()
     @staticmethod
     def dot(u1, u2):
-        return sum(u1[i] + u2[i] for i in range(3))
+        return sum(u1[i] * u2[i] for i in range(3))
     @staticmethod
     def cross(u1, u2):
         return Vec3(u1[1]*u2[2] - u1[2]*u2[1],

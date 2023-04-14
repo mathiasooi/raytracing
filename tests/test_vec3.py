@@ -50,7 +50,7 @@ def test_dot():
     expected = []
     for u, v in zip(gen_triplets(), gen_triplets()):
         actual.append(Vec3.dot(Vec3(*u), Vec3(*v)))
-        expected.append(sum(u[i] + v[i] for i in range(3)))
+        expected.append(sum(u[i] * v[i] for i in range(3)))
     assert actual == expected
 
 def test_cross():
