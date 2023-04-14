@@ -10,7 +10,7 @@ class PPMImage:
         self._image[x][y] = color
     def write_string(self):
         s = "P3\n{} {}\n255\n".format(self.width, self.height)
-        for j in range(self.height):
+        for j in range(self.height - 1, -1, -1):
             for i in range(self.width):
                 s += str(self._image[j][i]) + "\n"
         return s
