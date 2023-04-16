@@ -3,8 +3,19 @@ from raytracing.color import Color
 from raytracing.ray import Ray
 from raytracing.vec3 import Vec3
 from raytracing.point import Point
+from raytracing.hittable import Hittable, hit_record
+from raytracing.hittable_list import HittableList
+from raytracing.sphere import Sphere
+from raytracing.camera import Camera
+from raytracing.utility import clamp, INFINITY
+from random import random, uniform
 
-def ray_color(r: Ray):
+
+def ray_color(r: Ray, world: Hittable):
+    rec = hit_record()
+    if world.hit(r, 0, INFINITY, rec):
+        return (rec.normal + Color(1, 1, 1)) * 0.5
+
     unit_direction = r.direction.unit_vector()
     t = (unit_direction.y() + 1) * 0.5
     return Color(1, 1, 1)*(1-t) + Color(0.5, 0.7, 1) * t
@@ -13,28 +24,31 @@ def main():
     # Image
     aspect_ratio = 16.0 / 9
     image = PPMImage(400, 225)
+    # image = PPMImage(1600, 900)
+    samples = 16
 
     # Camera
-    viewport_height = 2.0
-    viewport_width = aspect_ratio * viewport_height
-    focal_length = 1.0
+    cam = Camera()
 
-    origin = Point(0, 0, 0)
-    horizontal = Vec3(viewport_width, 0, 0)
-    vertical = Vec3(0, viewport_height, 0)
-    lower_left_corner = origin - horizontal / 2 - vertical / 2 - Vec3(0, 0, focal_length)
+    # World
+    world = HittableList()
+    world.add(Sphere(Point(0, 0, -1), 0.5))
+    world.add(Sphere(Point(0, -100.5, -1), 100))
 
     # Render
-    for j in range(image.height):
+    for j in range(image.height): 
+        print("Completed line: {}/{}".format(j+1, image.height))
         for i in range(image.width):
-            u = i * 1.0 / (image.width - 1)
-            v = j * 1.0 / (image.height - 1)
-            r = Ray(origin, - origin + lower_left_corner + horizontal*u + vertical*v)
-            pixel_color = ray_color(r)
-            pixel_color = Color(pixel_color.x(), pixel_color.y(), pixel_color.z())
+            pixel_color = Color(0, 0, 0, samples)
+            for _ in range(samples):
+                u = (i + random()) / (image.width - 1)
+                v = (j + random()) / (image.height - 1)
+                r = cam.get_ray(u, v)
+                pixel_color += ray_color(r, world)
+            pixel_color = Color(pixel_color.x(), pixel_color.y(), pixel_color.z(), samples)
             image.set_pixel(j, i, pixel_color)
     
-    with open("blue_white_gradient.ppm", "w") as fout:
+    with open("test.ppm", "w") as fout:
         image.write_file(fout)
 
 
