@@ -7,7 +7,7 @@ from raytracing.hittable import Hittable, hit_record
 from raytracing.hittable_list import HittableList
 from raytracing.sphere import Sphere
 from raytracing.camera import Camera
-from raytracing.utility import clamp, INFINITY
+from raytracing.utility import clamp, INFINITY, load_world
 from random import random, uniform
 
 
@@ -31,9 +31,8 @@ def main():
     cam = Camera()
 
     # World
-    world = HittableList()
-    world.add(Sphere(Point(0, 0, -1), 0.5))
-    world.add(Sphere(Point(0, -100.5, -1), 100))
+    with open("shapes.json") as data:
+        world = load_world(data)
 
     # Render
     for j in range(image.height): 
@@ -54,4 +53,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    
