@@ -9,6 +9,7 @@ from raytracing.sphere import Sphere
 from raytracing.camera import Camera
 from raytracing.utility import clamp, INFINITY, load_world
 from random import random, uniform
+import sys
 
 
 def ray_color(r: Ray, world: Hittable):
@@ -31,7 +32,10 @@ def main():
     cam = Camera()
 
     # World
-    with open("shapes.json") as data:
+    filename = "shapes.json"
+    if len(sys.argv) > 1:
+        filename = sys.argv[1]
+    with open(filename) as data:
         world = load_world(data)
 
     # Render
