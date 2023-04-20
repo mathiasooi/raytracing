@@ -7,14 +7,32 @@ from raytracing.hittable import Hittable, hit_record
 from raytracing.hittable_list import HittableList
 from raytracing.sphere import Sphere
 from raytracing.camera import Camera
-from raytracing.utility import clamp, INFINITY, load_world
-from random import random, uniform
+from raytracing.utility import INFINITY
+from random import random
+from typing import TextIO
+import json
 import sys
 
+def load_scene(file: TextIO):
+    data = json.loads(file.read())
 
-def ray_color(r: Ray, world: Hittable):
+    # Image
+    image = PPMImage(data["image"]["width"], data["image"]["height"])
+
+    # Camera
+    cam = Camera()
+
+    # World
+    objects = HittableList()
+    for obj in data["objects"]:
+        if obj["type"] == "sphere":
+            objects.add(Sphere(Point(*obj["position"]), obj["radius"]))
+
+    return image, cam, objects, data["samples"]
+
+def ray_color(r: Ray, objects: Hittable):
     rec = hit_record()
-    if world.hit(r, 0, INFINITY, rec):
+    if objects.hit(r, 0, INFINITY, rec):
         return (rec.normal + Color(1, 1, 1)) * 0.5
 
     unit_direction = r.direction.unit_vector()
@@ -22,21 +40,11 @@ def ray_color(r: Ray, world: Hittable):
     return Color(1, 1, 1)*(1-t) + Color(0.5, 0.7, 1) * t
 
 def main():
-    # Image
-    aspect_ratio = 16.0 / 9
-    image = PPMImage(400, 225)
-    # image = PPMImage(1600, 900)
-    samples = 16
-
-    # Camera
-    cam = Camera()
-
-    # World
-    filename = "shapes.json"
-    if len(sys.argv) > 1:
-        filename = sys.argv[1]
+    # Load scene
+    filename = "scene.json"
+    if len(sys.argv) > 1: filename = sys.argv[1]
     with open(filename) as data:
-        world = load_world(data)
+        image, cam, objects, samples = load_scene(data)
 
     # Render
     for j in range(image.height): 
@@ -47,7 +55,7 @@ def main():
                 u = (i + random()) / (image.width - 1)
                 v = (j + random()) / (image.height - 1)
                 r = cam.get_ray(u, v)
-                pixel_color += ray_color(r, world)
+                pixel_color += ray_color(r, objects)
             pixel_color = Color(pixel_color.x(), pixel_color.y(), pixel_color.z(), samples)
             image.set_pixel(j, i, pixel_color)
     

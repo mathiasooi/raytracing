@@ -1,0 +1,22 @@
+{
+    "image": {
+      "width": 400,
+      "height": 225
+    },
+  
+    "samples": 16,
+  
+    "camera": {
+      "position": [0, 0.4, 0],
+      "direction": [0, 0, 1],
+      "normal": [0, 1, 0],
+      "focal_depth": 4,
+      "view_size": [16, 9]
+    },
+  
+    "objects": [
+      {"type": "sphere", "position": [0, 0, -1], "radius": 0.5},
+      {"type": "sphere", "position": [0, -100.5, -1], "radius": 100}
+    ]
+  }
+  
