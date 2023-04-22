@@ -32,18 +32,24 @@ class Vec3:
         return Vec3(*[-self._e[i] for i in range(3)])
     def __add__(self, other): 
         return Vec3(*[self._e[i] + other[i] for i in range(3)])
+    def __radd__(self, other):
+        return Vec3(*[self._e[i] + other[i] for i in range(3)])
     def __iadd__(self, other): 
         for i in range(3):
             self._e[i] += other[i]
         return self
     def __sub__(self, other): 
         return Vec3(*[self._e[i] - other[i] for i in range(3)])
+    def __rsub__(self, other): 
+        return Vec3(*[other[i] - self._e[i] for i in range(3)])
     def __isub__(self, other): 
         for i in range(3):
             self._e[i] -= other[i]
         return self
     def __mul__(self, t):
         """Scalar multiplication"""
+        return Vec3(*[self._e[i] * t for i in range(3)])
+    def __rmul__(self, t):
         return Vec3(*[self._e[i] * t for i in range(3)])
     def __imul__(self, t):
         for i in range(3):
