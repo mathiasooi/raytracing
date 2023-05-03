@@ -1,4 +1,5 @@
 from math import sqrt
+import random
 
 class Vec3:
     def __init__(self, e0: float = 0, e1: float = 0, e2: float = 0):
@@ -20,6 +21,21 @@ class Vec3:
         return Vec3(u1[1]*u2[2] - u1[2]*u2[1],
                     u1[2]*u2[0] - u1[0]*u2[2],
                     u1[0]*u2[1] - u1[1]*u2[0])
+    @staticmethod
+    def random():
+        return Vec3(random.random(), random.random(), random.random())
+    @staticmethod
+    def randrange(min, max):
+        return Vec3(random.uniform(min, max), random.uniform(min, max), random.uniform(min, max))
+    @staticmethod
+    def random_in_unit_sphere():
+        while True:
+            p = Vec3.randrange(-1, 1)
+            if p.length_squared() >= 1: continue
+            return p
+    @staticmethod
+    def random_unit_vec():
+        return Vec3.random_in_unit_sphere().unit_vector()
     def __str__(self): 
         return "<{} {} {}>".format(*self._e)
     def __repr__(self): 

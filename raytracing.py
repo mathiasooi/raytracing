@@ -30,10 +30,14 @@ def load_scene(file: TextIO):
 
     return image, cam, objects, data["samples"]
 
-def ray_color(r: Ray, objects: Hittable):
+def ray_color(r: Ray, objects: Hittable, depth):
     rec = hit_record()
-    if objects.hit(r, 0, INFINITY, rec):
-        return (rec.normal + Color(1, 1, 1)) * 0.5
+
+    if depth < 0: return Color()
+
+    if objects.hit(r, 0.001, INFINITY, rec):
+        target = rec.p + rec.normal + Vec3.random_unit_vec()
+        return ray_color(Ray(rec.p, target - rec.p), objects, depth - 1) * 0.5
 
     unit_direction = r.direction.unit_vector()
     t = (unit_direction.y() + 1) * 0.5
@@ -45,6 +49,7 @@ def main():
     if len(sys.argv) > 1: filename = sys.argv[1]
     with open(filename) as data:
         image, cam, objects, samples = load_scene(data)
+    max_depth = 50
 
     # Render
     for j in range(image.height): 
@@ -55,7 +60,7 @@ def main():
                 u = (i + random()) / (image.width - 1)
                 v = (j + random()) / (image.height - 1)
                 r = cam.get_ray(u, v)
-                pixel_color += ray_color(r, objects)
+                pixel_color += ray_color(r, objects, max_depth)
             pixel_color = Color(pixel_color.x(), pixel_color.y(), pixel_color.z(), samples)
             image.set_pixel(j, i, pixel_color)
     
