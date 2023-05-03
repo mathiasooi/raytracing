@@ -36,6 +36,10 @@ class Vec3:
     @staticmethod
     def random_unit_vec():
         return Vec3.random_in_unit_sphere().unit_vector()
+    @staticmethod
+    def random_in_hemisphere(normal):
+        in_unit_sphere = Vec3.random_in_unit_sphere()
+        return in_unit_sphere if  Vec3.dot(in_unit_sphere, normal) > 0 else -in_unit_sphere
     def __str__(self): 
         return "<{} {} {}>".format(*self._e)
     def __repr__(self): 

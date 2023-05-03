@@ -36,7 +36,7 @@ def ray_color(r: Ray, objects: Hittable, depth):
     if depth < 0: return Color()
 
     if objects.hit(r, 0.001, INFINITY, rec):
-        target = rec.p + rec.normal + Vec3.random_unit_vec()
+        target = rec.p + rec.normal + Vec3.random_in_hemisphere(rec.normal)
         return ray_color(Ray(rec.p, target - rec.p), objects, depth - 1) * 0.5
 
     unit_direction = r.direction.unit_vector()
